@@ -83,21 +83,40 @@ class Equation(Root_of_Eq):
             self.root_exist()
             print("Tolerance = ", end='')
             print(self.Tolerance)
+
+# Bisection method
             i, j, info = Root_of_Eq.bisection(self, self.expr, self.interval[0], self.interval[1], self.Tolerance, True)
             if i is None:
                 print('f(x) does not change sign in ' + str(self.interval))
             else:
                 print('The root is', i, 'found in', j, 'iterations')
                 print('f(%g)=%g' % (i, self.f_x(self.expr, i)))
-                header = ["no.", "a", "b", "f(a)"]
-                print(tabulate(info, header, tablefmt="fancy_grid", showindex=True, floatfmt=".4f"))
-
+                header = ["no.", "a", "b", "p", "f(p)", "Pn-Pn-1"]
+                print(tabulate(info, header, tablefmt="fancy_grid", showindex=True))
+                print('Bisection Root is = ' + str(i))
+# False Position / Regula Falsi Method
+            x, info = Root_of_Eq.regulaFalsi(self, self.expr, self.interval[0], self.interval[1], self.Tolerance, store=True)
+            header = ["no.", "a", "b", "p", "f(p)", "Pn-Pn-1"]
+            print(tabulate(info, header, tablefmt="fancy_grid", showindex=True))
+            print('Regula Falsi Root is = ' + str(x))
+# Newton method
             p0 = (self.interval[0]+self.interval[1])/2
             dg = diff(self.expr, Equation.x)
             x, info = Root_of_Eq.newton(self, self.expr, p0, dg, store=True)
-            print('Root is = ' + str(x))
-            header = ["n", "p", "f(p)"]
-            print(tabulate(info, header, tablefmt="fancy_grid", showindex=True, stralign="right", floatfmt=".4f"))
+            header = ["n", "p", "f(p)", "Pn-Pn-1"]
+            text = tabulate(info, header, tablefmt="fancy_grid", showindex=True)
+            print(text)
+            print('Newton Root is = ' + str(x))
+# Secant method
+            x, info = Root_of_Eq.secant(self, self.expr, self.interval[0], self.interval[1], self.Tolerance, store=True)
+            header = ["no.", "a", "b", "p", "f(p)", "Pn-Pn-1"]
+            print(tabulate(info, header, tablefmt="fancy_grid", showindex=True))
+            print('Secant Root is = ' + str(x))
+# Fixed point Method
+#             x, info = Root_of_Eq.fixed_point_iteration(self, self.expr, (self.interval[0]+self.interval[1])/2, self.Tolerance, store=True)
+#             header = ["no.", "p", "Pn-Pn-1"]
+#             print(tabulate(info, header, tablefmt="fancy_grid", showindex=True))
+#             print('Fixed point Root is = ' + str(x))
 
     def find_intervals(self):       # To find best interval if user has not provided any interval .
         self.interval.clear()       # Range to find the intervals in between(to be added in future )
